@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>状态压缩dp-思考-归纳 | sinfYuke的个人博客</title><meta name="author" content="sinfYuke"><meta name="copyright" content="sinfYuke"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="今天看了关于状态压缩dp的内容也将算法进阶指南&#96;&#96;线性dp那一章又细细理解了一下    线性dp中,计算对对象表现出明显的维度以及有序性,每个状态的求解直接构成一个阶段,这使得dp的状态表示就是阶段的表示,因此,我们只要在求解dp的每个维度上各取一个坐标值作为dp的状态,自然就可以描绘出已求解部分在状态空间中的轮廓特征,该轮廓特征的进展就是阶段的推移.所以接下来只要我们顺此循环每个唯独,根据问题要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="状态压缩dp-思考-归纳">
+<meta property="og:url" content="https://sinfyuke.github.io/2025/10/31/%E7%8A%B6%E6%80%81%E5%8E%8B%E7%BC%A9dp-%E6%80%9D%E8%80%83-%E5%BD%92%E7%BA%B3/index.html">
+<meta property="og:site_name" content="sinfYuke的个人博客">
+<meta property="og:description" content="今天看了关于状态压缩dp的内容也将算法进阶指南&#96;&#96;线性dp那一章又细细理解了一下    线性dp中,计算对对象表现出明显的维度以及有序性,每个状态的求解直接构成一个阶段,这使得dp的状态表示就是阶段的表示,因此,我们只要在求解dp的每个维度上各取一个坐标值作为dp的状态,自然就可以描绘出已求解部分在状态空间中的轮廓特征,该轮廓特征的进展就是阶段的推移.所以接下来只要我们顺此循环每个唯独,根据问题要">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sinfyuke.github.io/img/%E7%90%AA%E9%9C%B2%E8%AF%BA.png">
+<meta property="article:published_time" content="2025-10-30T16:24:41.000Z">
+<meta property="article:modified_time" content="2025-10-30T17:12:50.036Z">
+<meta property="article:author" content="sinfYuke">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sinfyuke.github.io/img/%E7%90%AA%E9%9C%B2%E8%AF%BA.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "状态压缩dp-思考-归纳",
+  "url": "https://sinfyuke.github.io/2025/10/31/%E7%8A%B6%E6%80%81%E5%8E%8B%E7%BC%A9dp-%E6%80%9D%E8%80%83-%E5%BD%92%E7%BA%B3/",
+  "image": "https://sinfyuke.github.io/img/%E7%90%AA%E9%9C%B2%E8%AF%BA.png",
+  "datePublished": "2025-10-30T16:24:41.000Z",
+  "dateModified": "2025-10-30T17:12:50.036Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "sinfYuke",
+      "url": "https://sinfYuke.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://sinfyuke.github.io/2025/10/31/%E7%8A%B6%E6%80%81%E5%8E%8B%E7%BC%A9dp-%E6%80%9D%E8%80%83-%E5%BD%92%E7%BA%B3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '状态压缩dp-思考-归纳',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 5.4.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">sinfYuke的个人博客</span></a><a class="nav-page-title" href="/"><span class="site-name">状态压缩dp-思考-归纳</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">状态压缩dp-思考-归纳</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-30T16:24:41.000Z" title="发表于 2025-10-31 00:24:41">2025-10-31</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-10-30T17:12:50.036Z" title="更新于 2025-10-31 01:12:50">2025-10-31</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>今天看了关于状态压缩dp的内容也将<code>算法进阶指南``线性dp</code>那一章又细细理解了一下  </p>
+<blockquote>
+<p>线性dp中,计算对对象表现出明显的维度以及有序性,每个状态的求解直接构成一个阶段,这使得dp的状态表示就是阶段的表示,因此,我们只要在求解dp的每个维度上各取一个坐标值作为dp的状态,自然就可以描绘出<code>已求解部分</code>在状态空间中的轮廓特征,该轮廓特征的进展就是阶段的推移.所以接下来只要我们顺此循环每个唯独,根据问题要求递推求解的具体实现过程也就顺理成章了.  </p>
+</blockquote>
+<p>我认为这段话<strong>十分精准</strong>,也是<strong>线性dp的思考方式参考</strong>,需要先找到影响结果的<code>维度</code>才可以进行状态表示,从而描绘出<code>已求解部分</code>的轮廓<br>仔细想来,实际上我做过的许多线性dp的习题<strong>都符合<code>描绘出已求解部分的轮廓</code>这个特征.</strong><br>举个例子:<br>照相问题,用k元组各项元素表示出各排已站好的人数,以此为维度来描绘出<code>已求解部分</code>也就是<code>已经排好的学生</code>  </p>
+<p>对于我而言,理解<code>算法进阶指南</code>就算是dp的基础<code>线性dp</code>也需要耗费大量精力,更不用说<code>LCIS</code>之后的<code>Making the Grade</code>这题了,那是真的几乎无法理解…  </p>
+<p>还有一点很重要,就是<strong>关于算法中数学知识的学习</strong>,在动态规划这一章与<code>集合</code>这个概念密切相关,<strong><code>集合</code>可以帮助我们更容易理解dp的构造</strong>.还有就是表示遍历常用的求和符号.  </p>
+<p>我还注意到一点,在<code>算法进阶指南</code>这本书中,似乎作者倾向于直接用数学表示逻辑而不是编程语法,<strong>这也许启示我们,在考虑动态规划的时候,用数学表示逻辑之后再用代码编写似乎更优</strong></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://sinfYuke.github.io">sinfYuke</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://sinfyuke.github.io/2025/10/31/%E7%8A%B6%E6%80%81%E5%8E%8B%E7%BC%A9dp-%E6%80%9D%E8%80%83-%E5%BD%92%E7%BA%B3/">https://sinfyuke.github.io/2025/10/31/%E7%8A%B6%E6%80%81%E5%8E%8B%E7%BC%A9dp-%E6%80%9D%E8%80%83-%E5%BD%92%E7%BA%B3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://sinfYuke.github.io" target="_blank">sinfYuke的个人博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E7%AE%97%E6%B3%95/">算法</a></div><div class="post-share"><div class="social-share" data-image="/img/%E7%90%AA%E9%9C%B2%E8%AF%BA.png"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/10/30/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%9A%84%E5%BC%80%E7%AB%AF/" title="个人博客的开端!"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">个人博客的开端!</div></div><div class="info-2"><div class="info-item-1">这里是sinfYuke的个人博客!我将会编写我的生活为文档,或是日常琐事,或是技术分享,或是学习心得   也许我的博客永远不会有人光顾不过这不是问题 这里的文章写给自己 我的浏览回顾即是此博客的价值体现!    今天是2025-10-30,博客的旅程从这里开始! </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/10/30/%E7%AE%97%E6%B3%95%E5%BF%83%E5%BE%97/" title="状态压缩dp-思考-归纳"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-30</div><div class="info-item-2">状态压缩dp-思考-归纳</div></div><div class="info-2"><div class="info-item-1">对了 yxc在课程中有推荐过算法竞赛进阶指南但我感觉对我来说还是有些许晦涩难懂但是其中的很多思想我觉得都很精妙!比如,书中对于线性dp的定义,不只是定义为状态计算是线性的,而是  在单个或数个状态维度上线性增长,由单个或数个边界点向整个状态空间有方向地进行转移,拓展,最后在每个状态上都保留了一自身为目标的子问题最优解    我认为这一定义是即抽象又准确形象的!   yxc在课程中更倾向于使用状态表示,状态划分,状态计算,这样的步骤来分析动态规划问题yxc也提到许多教程更倾向于使用最优子结构,状态,阶段,决策,这样抽象的表述,导致初学者望而却步,不过实际上如果我们观察过算法竞赛进阶指南和yxc的算法基础课很容易就可以发现yxc的课程很到程序上是借鉴了算法竞赛进阶指南的学习流程和例题思想的   书中很多的思考过程都是很跳跃的,比如以下:  因为在合法的合影方案中每行、每列的身高都是单调的，所以我们可以从高到低依次考虑标记为1，2，·，N的学生站的位置。这样一来，在任意时刻，已经安排好位置的学生在每一行中占据的一定是从左端开始的连续若干个位置，用一个k元组（a1，a2，…，ak）表示每...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/%E7%90%AA%E9%9C%B2%E8%AF%BA.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">sinfYuke</div><div class="author-info-description">awa</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/sinfYuke"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">快乐学习生活</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/31/%E7%8A%B6%E6%80%81%E5%8E%8B%E7%BC%A9dp-%E6%80%9D%E8%80%83-%E5%BD%92%E7%BA%B3/" title="状态压缩dp-思考-归纳">状态压缩dp-思考-归纳</a><time datetime="2025-10-30T16:24:41.000Z" title="发表于 2025-10-31 00:24:41">2025-10-31</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/30/%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%9A%84%E5%BC%80%E7%AB%AF/" title="个人博客的开端!">个人博客的开端!</a><time datetime="2025-10-30T14:08:59.000Z" title="发表于 2025-10-30 22:08:59">2025-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/30/%E7%AE%97%E6%B3%95%E5%BF%83%E5%BE%97/" title="状态压缩dp-思考-归纳">状态压缩dp-思考-归纳</a><time datetime="2025-10-30T04:24:41.000Z" title="发表于 2025-10-30 12:24:41">2025-10-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/28/sinfYuke'sMarkdownPrecticeFile/" title="sinfYuke的markdown练习">sinfYuke的markdown练习</a><time datetime="2025-10-28T04:24:41.000Z" title="发表于 2025-10-28 12:24:41">2025-10-28</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By sinfYuke</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 5.4.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
